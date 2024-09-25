@@ -64,10 +64,23 @@ else:
 o_lat_rad = o_lat_deg*(math.pi/180.0)
 o_lon_rad = o_lon_deg*(math.pi/180.0)
 
-ecef_x_km=(math.cos(o_lon_rad)*math.sin(o_lat_rad)*s_km)+(math.cos(o_lon_rad)*math.cos(o_lat_rad)*z_km)-(math.sin(o_lon_rad)*e_km)
-ecef_y_km=(math.sin(o_lon_rad)*math.sin(o_lat_rad)*s_km)+(math.sin(o_lon_rad)*math.cos(o_lat_rad)*z_km)+(math.cos(o_lon_rad)*e_km)
-ecef_z_km=(-math.cos(o_lat_rad)*s_km)+(math.sin(o_lat_rad)*z_km)
+# Calculates ECEF Coordinates
+ecef_x=(math.cos(o_lon_rad)*math.sin(o_lat_rad)*s_km)+(math.cos(o_lon_rad)*math.cos(o_lat_rad)*z_km)-(math.sin(o_lon_rad)*e_km)
+ecef_y=(math.sin(o_lon_rad)*math.sin(o_lat_rad)*s_km)+(math.sin(o_lon_rad)*math.cos(o_lat_rad)*z_km)+(math.cos(o_lon_rad)*e_km)
+ecef_z=(-math.cos(o_lat_rad)*s_km)+(math.sin(o_lat_rad)*z_km)
 
+#Calculates the rxyz vector
+denom = calc_denom(E_E, o_lat_rad)
+C_E = R_E_KM / denom
+S_E = (R_E_KM * (1 - E_E * E_E)) / denom
+r_x_km = (C_E + o_hae_km) * math.cos(o_lat_rad) * math.cos(o_lon_rad)
+r_y_km = (C_E + o_hae_km) * math.cos(o_lat_rad) * math.sin(o_lon_rad)
+r_z_km = (S_E + o_hae_km) * math.sin(o_lat_rad)
+
+#ECEF Vector
+ecef_x_km = ecef_x+r_x_km
+ecef_y_km = ecef_y+r_y_km
+ecef_z_km = ecef_z+r_z_km
 
 
 print(f"{ecef_x_km:.3f}")
